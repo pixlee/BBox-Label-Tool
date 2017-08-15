@@ -39,7 +39,11 @@ class LabelTool():
         self.category = 0
         self.imagename = ''
         self.labelfilename = ''
+        self.categoryfilename = ''
         self.tkimg = None
+
+        #initialize clothes variables
+        self.cloth_category = StringVar(self.frame)
 
         # initialize mouse state
         self.STATE = {}
@@ -81,10 +85,19 @@ class LabelTool():
         self.btnDel.grid(row = 3, column = 2, sticky = W+E+N)
         self.btnClear = Button(self.frame, text = 'ClearAll', command = self.clearBBox)
         self.btnClear.grid(row = 4, column = 2, sticky = W+E+N)
+        #adding categories
+        self.lb2 = Label(self.frame, text='Clothes Categories:')
+        self.lb2.grid(row=5, column=2, sticky=W + N+E)
+        self.cloth_category.set("Blouse")  # initial value
+        self.option = OptionMenu(self.frame, self.cloth_category, 'Blouse', 'Chiffon', 'Coat', 'Dress',
+       'Jeans', 'Lace_Dress', 'Lace_Shirt', 'Leggings', 'Pants',
+       'Polo_Shirt', 'Skirt', 'Sleeveless_Dress', 'Summer_Suit',
+       'Suspenders_Skirt', 'T_Shirt', 'Tank_Top')
+        self.option.grid(row=6,column=2, sticky = W+E+N)
 
         # control panel for image navigation
         self.ctrPanel = Frame(self.frame)
-        self.ctrPanel.grid(row = 5, column = 1, columnspan = 2, sticky = W+E)
+        self.ctrPanel.grid(row = 7, column = 1, columnspan = 2, sticky = W+E)
         self.prevBtn = Button(self.ctrPanel, text='<< Prev', width = 10, command = self.prevImage)
         self.prevBtn.pack(side = LEFT, padx = 5, pady = 3)
         self.nextBtn = Button(self.ctrPanel, text='Next >>', width = 10, command = self.nextImage)
@@ -113,7 +126,7 @@ class LabelTool():
         self.disp.pack(side = RIGHT)
 
         self.frame.columnconfigure(1, weight = 1)
-        self.frame.rowconfigure(4, weight = 1)
+        self.frame.rowconfigure(6, weight = 1)
 
         # for debugging
 ##        self.setImage()
@@ -171,7 +184,7 @@ class LabelTool():
         imagepath = self.imageList[self.cur - 1]
         self.img = Image.open(imagepath)
         self.tkimg = ImageTk.PhotoImage(self.img)
-        self.mainPanel.config(width = max(self.tkimg.width(), 400), height = max(self.tkimg.height(), 400))
+        self.mainPanel.config(width = max(self.tkimg.width(), 500), height = max(self.tkimg.height(), 500))
         self.mainPanel.create_image(0, 0, image = self.tkimg, anchor=NW)
         self.progLabel.config(text = "%04d/%04d" %(self.cur, self.total))
 
@@ -180,6 +193,7 @@ class LabelTool():
         self.imagename = os.path.split(imagepath)[-1].split('.')[0]
         labelname = self.imagename + '.txt'
         self.labelfilename = os.path.join(self.outDir, labelname)
+        self.categoryfilename = os.path.join(self.outDir, labelname+'_cat')
         bbox_cnt = 0
         if os.path.exists(self.labelfilename):
             with open(self.labelfilename) as f:
@@ -203,6 +217,9 @@ class LabelTool():
             f.write('%d\n' %len(self.bboxList))
             for bbox in self.bboxList:
                 f.write(' '.join(map(str, bbox)) + '\n')
+        with open(self.categoryfilename,'w') as f:
+            print()
+            f.write(str(self.cloth_category.get())+ '\n')
         print 'Image No. %d saved' %(self.cur)
 
 
