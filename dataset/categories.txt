@@ -1,0 +1,16 @@
+1    Blouse
+2    Chiffon
+3    Coat
+4    Dress
+5    Jeans
+6    Lace_Dress
+7    Lace_Shirt
+8    Leggings
+9    Pants
+10    Polo_Shirt
+11    Skirt
+12    Sleeveless_Dress
+13    Summer_Suit
+14    Suspenders_Skirt
+15    T_Shirt
+16    Tank_Top
