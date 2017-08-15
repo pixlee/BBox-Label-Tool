@@ -144,14 +144,16 @@ class LabelTool():
 ##            return
         # get image list
         self.imageDir = os.path.join(r'./Images', '%03d' %(self.category))
-        self.imageList = glob.glob(os.path.join(self.imageDir, '*.JPEG'))
+        self.imageList = glob.glob(os.path.join(self.imageDir, '*.jpg'))
+        
         if len(self.imageList) == 0:
-            print 'No .JPEG images found in the specified dir!'
+            print 'No .jpg images found in the specified dir!'
             return
 
         # default to the 1st image in the collection
         self.cur = 1
         self.total = len(self.imageList)
+        
 
          # set up output dir
         self.outDir = os.path.join(r'./Labels', '%03d' %(self.category))
@@ -162,7 +164,7 @@ class LabelTool():
         self.egDir = os.path.join(r'./Examples', '%03d' %(self.category))
         if not os.path.exists(self.egDir):
             return
-        filelist = glob.glob(os.path.join(self.egDir, '*.JPEG'))
+        filelist = glob.glob(os.path.join(self.egDir, '*.jpg'))
         self.tmp = []
         self.egList = []
         random.shuffle(filelist)
@@ -193,7 +195,7 @@ class LabelTool():
         self.imagename = os.path.split(imagepath)[-1].split('.')[0]
         labelname = self.imagename + '.txt'
         self.labelfilename = os.path.join(self.outDir, labelname)
-        self.categoryfilename = os.path.join(self.outDir, labelname+'_cat')
+        self.categoryfilename = os.path.join(self.outDir, labelname+'_cat.txt')
         bbox_cnt = 0
         if os.path.exists(self.labelfilename):
             with open(self.labelfilename) as f:
