@@ -40,10 +40,14 @@ class LabelTool():
         self.imagename = ''
         self.labelfilename = ''
         self.categoryfilename = ''
+        self.fashionfilename = ''
         self.tkimg = None
 
         #initialize clothes variables
         self.cloth_category = StringVar(self.frame)
+        self.cloth_category.set("Blouse")  # initial value
+        self.is_clothing = StringVar(self.frame)
+        self.is_clothing.set("Fashion")  # initial value
 
         # initialize mouse state
         self.STATE = {}
@@ -88,16 +92,20 @@ class LabelTool():
         #adding categories
         self.lb2 = Label(self.frame, text='Clothes Categories:')
         self.lb2.grid(row=5, column=2, sticky=W + N+E)
-        self.cloth_category.set("Blouse")  # initial value
+        
         self.option = OptionMenu(self.frame, self.cloth_category, 'Blouse', 'Chiffon', 'Coat', 'Dress',
        'Jeans', 'Lace_Dress', 'Lace_Shirt', 'Leggings', 'Pants',
        'Polo_Shirt', 'Skirt', 'Sleeveless_Dress', 'Summer_Suit',
-       'Suspenders_Skirt', 'T_Shirt', 'Tank_Top')
+       'Suspenders_Skirt', 'T_Shirt', 'Tank_Top','Other')
         self.option.grid(row=6,column=2, sticky = W+E+N)
 
+        self.lb3 = Label(self.frame, text='Is Fashion:')
+        self.lb3.grid(row=7, column=2, sticky=W + N+E)
+        self.option_fashion = OptionMenu(self.frame, self.is_clothing, 'Fashion','Not Fashion')
+        self.option_fashion.grid(row=8,column=2, sticky = W+E+N)
         # control panel for image navigation
         self.ctrPanel = Frame(self.frame)
-        self.ctrPanel.grid(row = 7, column = 1, columnspan = 2, sticky = W+E)
+        self.ctrPanel.grid(row = 9, column = 1, columnspan = 2, sticky = W+E)
         self.prevBtn = Button(self.ctrPanel, text='<< Prev', width = 10, command = self.prevImage)
         self.prevBtn.pack(side = LEFT, padx = 5, pady = 3)
         self.nextBtn = Button(self.ctrPanel, text='Next >>', width = 10, command = self.nextImage)
@@ -126,7 +134,7 @@ class LabelTool():
         self.disp.pack(side = RIGHT)
 
         self.frame.columnconfigure(1, weight = 1)
-        self.frame.rowconfigure(6, weight = 1)
+        self.frame.rowconfigure(8, weight = 1)
 
         # for debugging
 ##        self.setImage()
@@ -164,7 +172,7 @@ class LabelTool():
         self.egDir = os.path.join(r'./Examples', '%03d' %(self.category))
         if not os.path.exists(self.egDir):
             return
-        filelist = glob.glob(os.path.join(self.egDir, '*.jpg'))
+        filelist = glob.glob(os.path.join(self.egDir, '*.JPEG'))
         self.tmp = []
         self.egList = []
         random.shuffle(filelist)
@@ -186,7 +194,7 @@ class LabelTool():
         imagepath = self.imageList[self.cur - 1]
         self.img = Image.open(imagepath)
         self.tkimg = ImageTk.PhotoImage(self.img)
-        self.mainPanel.config(width = max(self.tkimg.width(), 500), height = max(self.tkimg.height(), 500))
+        self.mainPanel.config(width = min(self.tkimg.width(), 800), height = min(self.tkimg.height(), 800))
         self.mainPanel.create_image(0, 0, image = self.tkimg, anchor=NW)
         self.progLabel.config(text = "%04d/%04d" %(self.cur, self.total))
 
@@ -196,6 +204,7 @@ class LabelTool():
         labelname = self.imagename + '.txt'
         self.labelfilename = os.path.join(self.outDir, labelname)
         self.categoryfilename = os.path.join(self.outDir, labelname+'_cat.txt')
+        self.fashionfilename = os.path.join(self.outDir, labelname+'_is_fashion.txt')
         bbox_cnt = 0
         if os.path.exists(self.labelfilename):
             with open(self.labelfilename) as f:
@@ -220,8 +229,9 @@ class LabelTool():
             for bbox in self.bboxList:
                 f.write(' '.join(map(str, bbox)) + '\n')
         with open(self.categoryfilename,'w') as f:
-            print()
             f.write(str(self.cloth_category.get())+ '\n')
+        with open(self.fashionfilename,'w') as f:
+            f.write(str(self.is_clothing.get())+ '\n')
         print 'Image No. %d saved' %(self.cur)
 
 
